@@ -1,6 +1,6 @@
 label = "${UUID.randomUUID().toString()}"
 git_project = "v3ctl"
-git_project_user = "iguazio"
+git_project_user = "v3io"
 git_deploy_user_token = "iguazio-prod-git-user-token"
 git_deploy_user_private_key = "iguazio-prod-git-user-private-key"
 
