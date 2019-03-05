@@ -3,10 +3,7 @@ GOARCH ?= amd64
 V3CTL_TAG ?= latest
 V3CTL_REPOSITORY ?= v3io/
 V3CTL_PATH ?= /v3ctl
-V3CTL_BUILD_COMMAND ?= CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags="-s -w" -o $(GOPATH)/bin/v3ctl-$(V3CTL_TAG)-$(GOOS)-$(GOARCH) $(V3CTL_PATH)/cmd/v3ctl/main.go
-
-# force go modules
-export GO111MODULE := on
+V3CTL_BUILD_COMMAND ?= CGO_ENABLED=0 GO111MODULE=on go build -a -installsuffix cgo -ldflags="-s -w" -o $(GOPATH)/bin/v3ctl-$(V3CTL_TAG)-$(GOOS)-$(GOARCH) $(V3CTL_PATH)/cmd/v3ctl/main.go
 
 .PHONY: lint
 lint:
