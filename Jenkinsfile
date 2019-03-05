@@ -20,7 +20,7 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang")
                         container('jnlp') {
                             RELEASE_ID = github.get_release_id(git_project, git_project_user, "${github.TAG_VERSION}", GIT_TOKEN)
 
-                            dir("${github.BUILD_FOLDER}/src/github.com/iguazio/${git_project}") {
+                            dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
                                 git(changelog: false, credentialsId: git_deploy_user_private_key, poll: false, url: "git@github.com:${git_project_user}/${git_project}.git")
                                 common.shellc("git checkout ${github.TAG_VERSION}")
                             }
@@ -30,21 +30,21 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang")
                     parallel(
                         'build linux binaries': {
                             container('golang') {
-                                dir("${github.BUILD_FOLDER}/src/github.com/iguazio/${git_project}") {
+                                dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
                                     common.shellc("V3CTL_TAG=${github.TAG_VERSION} GOARCH=amd64 GOOS=linux make v3ctl-bin")
                                 }
                             }
                         },
                         'build darwin binaries': {
                             container('golang') {
-                                dir("${github.BUILD_FOLDER}/src/github.com/iguazio/${git_project}") {
+                                dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
                                     common.shellc("V3CTL_TAG=${github.TAG_VERSION} GOARCH=amd64 GOOS=darwin make v3ctl-bin")
                                 }
                             }
                         },
                         'build windows binaries': {
                             container('golang') {
-                                dir("${github.BUILD_FOLDER}/src/github.com/iguazio/${git_project}") {
+                                dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
                                     common.shellc("V3CTL_TAG=${github.TAG_VERSION} GOARCH=amd64 GOOS=windows make v3ctl-bin")
                                 }
                             }
