@@ -28,7 +28,7 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang")
                     }
 
                     stage('get dependencies') {
-                        container('golang') {
+                        container('golang:1.12') {
                             dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
                                 common.shellc("make get-dependencies")
                             }
@@ -37,21 +37,21 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang")
 
                     parallel(
                         'build linux binaries': {
-                            container('golang') {
+                            container('golang:1.12') {
                                 dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
                                     common.shellc("V3CTL_TAG=${github.TAG_VERSION} GOARCH=amd64 GOOS=linux make v3ctl-bin")
                                 }
                             }
                         },
                         'build darwin binaries': {
-                            container('golang') {
+                            container('golang:1.12') {
                                 dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
                                     common.shellc("V3CTL_TAG=${github.TAG_VERSION} GOARCH=amd64 GOOS=darwin make v3ctl-bin")
                                 }
                             }
                         },
                         'build windows binaries': {
-                            container('golang') {
+                            container('golang:1.12') {
                                 dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
                                     common.shellc("V3CTL_TAG=${github.TAG_VERSION} GOARCH=amd64 GOOS=windows make v3ctl-bin")
                                 }
