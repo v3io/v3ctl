@@ -31,6 +31,8 @@ github.com/nuclio/renderer v0.0.1/go.mod h1:9BR4iUBYvRlMfm08gmstzPEKbhKFOboIsBvn
 github.com/nuclio/zap v0.0.0-20190303161231-1ec7b2ab8470/go.mod h1:SUxPsgePvlyjx6c5MtGdB50pf0IQThtlyLwISLboeuc=
 github.com/nuclio/zap v0.0.1 h1:5ac25eRUs57Q+eH545RSDdT3at73s+V1bsTSRzTlSoc=
 github.com/nuclio/zap v0.0.1/go.mod h1:SUxPsgePvlyjx6c5MtGdB50pf0IQThtlyLwISLboeuc=
+github.com/nuclio/zap v0.0.2 h1:rY5PkMOl8CTkqRqIPuxziBiKK6Mq/8oEurfgRnNtqf0=
+github.com/nuclio/zap v0.0.2/go.mod h1:SUxPsgePvlyjx6c5MtGdB50pf0IQThtlyLwISLboeuc=
 github.com/olekukonko/tablewriter v0.0.1 h1:b3iUnf1v+ppJiOfNX4yxxqfWKMQPZR5yoh8urCTFX88=
 github.com/olekukonko/tablewriter v0.0.1/go.mod h1:vsDQFd/mU46D+Z4whnwzcISnGGzXWMclvtLoiIKAKIo=
 github.com/pavius/zap v1.4.1 h1:RH76G+9GZhLX13qFUnM8mY4sTlQV6mwB72sv+k5dgmI=
@@ -51,6 +53,8 @@ github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/v3io/v3io-go v0.0.2 h1:UuBLhPm9cvEE/u4/8KXitc1J3hAOs3DjTDP/sQupzeI=
 github.com/v3io/v3io-go v0.0.2/go.mod h1:nnrLBUhEX3ha+PGl+ll3n281yi7wCbr0D8rCCOFdkK0=
+github.com/v3io/v3io-go v0.0.3 h1:PD7RJ7Mg+SoO/TeaBBm2BGqU5xLKBiDoNRCbVZuB70c=
+github.com/v3io/v3io-go v0.0.3/go.mod h1:hDmQeHZg/GGB+71ZWnPNpbYaqpRMrMad41oMxuSHN3o=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.2.0 h1:dzZJf2IuMiclVjdw0kkT+f9u4YdrapbNyGAN47E/qnk=
@@ -66,6 +70,7 @@ golang.org/x/net v0.0.0-20180911220305-26e67e76b6c3/go.mod h1:mL1N/T3taQHkDXs73r
 golang.org/x/net v0.0.0-20190301231341-16b79f2e4e95/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20190303192550-c2f5717e611c/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
+golang.org/x/sys v0.0.0-20190305064518-30e92a19ae4a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

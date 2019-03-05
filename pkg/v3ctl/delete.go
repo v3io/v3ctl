@@ -2,13 +2,14 @@ package v3ctl
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
-
-	"github.com/v3io/v3io-go/pkg/controlplane"
-	"github.com/v3io/v3io-go/pkg/dataplane"
 
 	"github.com/nuclio/errors"
 	"github.com/spf13/cobra"
+	"github.com/v3io/v3io-go/pkg/controlplane"
+	"github.com/v3io/v3io-go/pkg/dataplane"
+	"github.com/v3io/v3io-go/pkg/dataplane/http"
 )
 
 type deleteCommandeer struct {
@@ -69,7 +70,12 @@ func newDeleteContainerCommandeer(deleteCommandeer *deleteCommandeer) *deleteCon
 			}
 
 			deleteContainerInput := v3ioc.DeleteContainerInput{}
-			deleteContainerInput.ID = args[0]
+
+			// resolve the container name to an ID
+			deleteContainerInput.ID, err = deleteCommandeer.getContainerID(args[0])
+			if err != nil {
+				return errors.Wrap(err, "Failed to get container ID")
+			}
 
 			err = controlPlaneSession.DeleteContainerSync(&deleteContainerInput)
 			if err != nil {
@@ -84,6 +90,39 @@ func newDeleteContainerCommandeer(deleteCommandeer *deleteCommandeer) *deleteCon
 	commandeer.cmd = cmd
 
 	return commandeer
+}
+
+func (c *deleteCommandeer) getContainerID(containerNameOrID string) (string, error) {
+
+	// get containers
+	getContainersInput := v3io.GetContainersInput{}
+	getContainersInput.AuthenticationToken = v3iohttp.GenerateAuthenticationToken(c.rootCommandeer.username, c.rootCommandeer.password)
+	getContainersInput.AccessKey = c.rootCommandeer.accessKey
+
+	response, err := c.rootCommandeer.dataPlaneContext.GetContainersSync(&getContainersInput)
+	if err != nil {
+		return "", errors.Wrap(err, "Failed to get containers")
+	}
+
+	// iterate over containers and look for a container whose name == name
+	for _, container := range response.Output.(*v3io.GetContainersOutput).Results.Containers {
+		if container.Name == containerNameOrID {
+			return strconv.Itoa(container.ID), nil
+		}
+	}
+
+	// couldn't find container with this name.
+	// iterate over the containers and look for a container with this ID
+	for _, container := range response.Output.(*v3io.GetContainersOutput).Results.Containers {
+		idString := strconv.Itoa(container.ID)
+
+		if idString == containerNameOrID {
+			return idString, nil
+		}
+	}
+
+	// could not find container with this name / id
+	return "", errors.Errorf("Could not find container with name or ID of %s", containerNameOrID)
 }
 
 type deleteStreamCommandeer struct {

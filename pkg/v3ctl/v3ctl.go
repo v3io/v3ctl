@@ -4,15 +4,14 @@ import (
 	"os"
 	"sync"
 
-	"github.com/v3io/v3io-go/pkg/controlplane"
-	"github.com/v3io/v3io-go/pkg/controlplane/http"
-	"github.com/v3io/v3io-go/pkg/dataplane"
-	"github.com/v3io/v3io-go/pkg/dataplane/http"
-
 	"github.com/nuclio/errors"
 	"github.com/nuclio/logger"
 	"github.com/nuclio/zap"
 	"github.com/spf13/cobra"
+	"github.com/v3io/v3io-go/pkg/controlplane"
+	"github.com/v3io/v3io-go/pkg/controlplane/http"
+	"github.com/v3io/v3io-go/pkg/dataplane"
+	"github.com/v3io/v3io-go/pkg/dataplane/http"
 )
 
 type RootCommandeer struct {
@@ -20,6 +19,7 @@ type RootCommandeer struct {
 	cmd                 *cobra.Command
 	verbose             bool
 	server              string
+	controlServer       string
 	containerName       string
 	logLevel            string
 	username            string
@@ -57,6 +57,8 @@ debug | info | warn | error. For example: -v=warn`)
 the Iguazio Continuous Data Platform, of the format
 "<IP address>:<port number=8081>". Examples: "localhost:8081"
 (when running on the target platform); "192.168.1.100:8081".`)
+	cmd.PersistentFlags().StringVarP(&commandeer.controlServer, "control-server", "", defaultV3ioServer,
+		`Service endpoint of the control server`)
 	cmd.PersistentFlags().StringVarP(&commandeer.containerName, "container", "c", "",
 		`The name of an Iguazio Continuous Data Platform data container
 in which to create the TSDB table. Example: "bigdata".`)
@@ -146,7 +148,7 @@ func (rc *RootCommandeer) getControlPlaneSession() (v3ioc.Session, error) {
 	}
 
 	createSessionInput := v3ioc.CreateSessionInput{}
-	createSessionInput.Endpoints = []string{rc.server}
+	createSessionInput.Endpoints = []string{rc.controlServer}
 	createSessionInput.Username = rc.username
 	createSessionInput.Password = rc.password
 	// createSessionInput.AccessKey = rc.accessKey

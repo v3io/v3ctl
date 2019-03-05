@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/v3io/v3io-go/pkg/controlplane"
-	"github.com/v3io/v3io-go/pkg/dataplane"
-
 	"github.com/nuclio/errors"
 	"github.com/spf13/cobra"
+	"github.com/v3io/v3io-go/pkg/controlplane"
+	"github.com/v3io/v3io-go/pkg/dataplane"
 )
 
 type createCommandeer struct {

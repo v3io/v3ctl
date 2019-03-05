@@ -5,12 +5,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/v3io/v3io-go/pkg/dataplane"
-	"github.com/v3io/v3io-go/pkg/dataplane/http"
-
 	"github.com/nuclio/errors"
 	"github.com/nuclio/renderer"
 	"github.com/spf13/cobra"
+	"github.com/v3io/v3io-go/pkg/dataplane"
+	"github.com/v3io/v3io-go/pkg/dataplane/http"
 )
 
 type getCommandeer struct {
@@ -127,16 +126,23 @@ func newGetStreamCommandeer(getCommandeer *getCommandeer) *getStreamsCommandeer 
 				return errors.Wrap(err, "Failed to initialize root")
 			}
 
-			response, err := getCommandeer.rootCommandeer.dataPlaneContext.GetContainerContentsSync(&v3io.GetContainerContentsInput{
-				Path: args[0],
-			})
+			path := args[0]
+
+			// populate request
+			getItemsInput := &v3io.GetItemsInput{}
+			getItemsInput.Path = path
+			getItemsInput.ContainerName = getCommandeer.rootCommandeer.containerName
+			getItemsInput.AuthenticationToken = v3iohttp.GenerateAuthenticationToken(getCommandeer.rootCommandeer.username, getCommandeer.rootCommandeer.password)
+			getItemsInput.AccessKey = getCommandeer.rootCommandeer.accessKey
+
+			response, err := getCommandeer.rootCommandeer.dataPlaneContext.GetItemsSync(getItemsInput)
 
 			if err != nil {
 				return errors.Wrapf(err, "Failed to get container contents at %s", args[0])
 			}
 
-			for _, content := range response.Output.(*v3io.GetContainerContentsOutput).Contents {
-				fmt.Println(content.Key)
+			for _, content := range response.Output.(*v3io.GetItemsOutput).Items {
+				fmt.Println(content)
 			}
 
 			return nil

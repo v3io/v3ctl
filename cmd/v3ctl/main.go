@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/iguazio/v3ctl/pkg/v3ctl"
+	"github.com/v3io/v3ctl/pkg/v3ctl"
 
 	"github.com/nuclio/errors"
 )
