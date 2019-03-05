@@ -1,9 +1,12 @@
+GOPATH ?= /go
 GOOS ?= linux
 GOARCH ?= amd64
 V3CTL_TAG ?= latest
-V3CTL_REPOSITORY ?= v3io/
-V3CTL_PATH ?= /v3ctl
-V3CTL_BUILD_COMMAND ?= CGO_ENABLED=0 GO111MODULE=on go build -a -installsuffix cgo -ldflags="-s -w" -o $(GOPATH)/bin/v3ctl-$(V3CTL_TAG)-$(GOOS)-$(GOARCH) $(V3CTL_PATH)/cmd/v3ctl/main.go
+V3CTL_PATH ?= $(GOPATH)/src/github.com/v3io/v3ctl
+V3CTL_BUILD_COMMAND ?= CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags="-s -w" -o $(GOPATH)/bin/v3ctl-$(V3CTL_TAG)-$(GOOS)-$(GOARCH) $(V3CTL_PATH)/cmd/v3ctl/main.go
+
+# force go modules
+export GO111MODULE := on
 
 .PHONY: lint
 lint:
@@ -26,7 +29,7 @@ v3ctl:
 	docker run \
 		--volume $(shell pwd):$(V3CTL_PATH) \
 		--volume $(shell pwd):/go/bin \
-		--workdir $(V3CTL_PATH) \
+		--workdir $(GOPATH) \
 		--env GOOS=$(GOOS) \
 		--env GOARCH=$(GOARCH) \
 		golang:1.12 \
