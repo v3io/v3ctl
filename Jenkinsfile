@@ -27,6 +27,14 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang")
                         }
                     }
 
+                    stage('get dependencies') {
+                        container('golang') {
+                            dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
+                                common.shellc("make get-dependencies")
+                            }
+                        }
+                    }
+
                     parallel(
                         'build linux binaries': {
                             container('golang') {

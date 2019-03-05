@@ -19,9 +19,12 @@ lint:
 
 	@echo Done.
 
-.PHONY: bin
-v3ctl-bin:
+.PHONY: get-dependencies
+get-dependencies:
 	go get ./...
+
+.PHONY: v3ctl-bin
+v3ctl-bin:
 	$(V3CTL_BUILD_COMMAND)
 
 .PHONY: v3ctl
