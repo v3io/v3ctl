@@ -97,24 +97,26 @@ func (rc *RootCommandeer) initialize() error {
 		return errors.Wrap(err, "Failed to create v3io context")
 	}
 
-	if rc.containerName != "" {
-		session, err := rc.dataPlaneContext.NewSessionSync(&v3io.NewSessionInput{
-			Username:  rc.username,
-			Password:  rc.password,
-			AccessKey: rc.accessKey,
-		})
+	if rc.containerName == "" {
+		return errors.New("Container must be specified (use --container)")
+	}
 
-		if err != nil {
-			return errors.Wrap(err, "Failed to create session")
-		}
+	session, err := rc.dataPlaneContext.NewSessionSync(&v3io.NewSessionInput{
+		Username:  rc.username,
+		Password:  rc.password,
+		AccessKey: rc.accessKey,
+	})
 
-		rc.container, err = session.NewContainer(&v3io.NewContainerInput{
-			ContainerName: rc.containerName,
-		})
+	if err != nil {
+		return errors.Wrap(err, "Failed to create session")
+	}
 
-		if err != nil {
-			return errors.Wrap(err, "Failed to open container")
-		}
+	rc.container, err = session.NewContainer(&v3io.NewContainerInput{
+		ContainerName: rc.containerName,
+	})
+
+	if err != nil {
+		return errors.Wrap(err, "Failed to open container")
 	}
 
 	return nil
