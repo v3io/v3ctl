@@ -47,7 +47,7 @@ func NewRootCommandeer() *RootCommandeer {
 		SilenceErrors: true,
 	}
 
-	defaultV3ioServer := os.Getenv("V3IO_SERVICE_URL")
+	defaultV3ioServer := os.Getenv("V3IO_API")
 
 	cmd.PersistentFlags().StringVarP(&commandeer.logLevel, "log-level", "v", "debug",
 		`Verbose output. Add "=<level>" to set the log level -
@@ -101,10 +101,25 @@ func (rc *RootCommandeer) initialize() error {
 		return errors.New("Container must be specified (use --container)")
 	}
 
+	var username string
+	var password string
+	var accessKey = rc.accessKey
+
+	// Only use username and password from cli if access key was not also provided on cli.
+	if accessKey == "" {
+		username = rc.username
+		password = rc.password
+
+		// Only use V3IO_ACCESS_KEY if no credentials were provided on cli.
+		if password == "" {
+			accessKey = os.Getenv("V3IO_ACCESS_KEY")
+		}
+	}
+
 	session, err := rc.dataPlaneContext.NewSessionSync(&v3io.NewSessionInput{
-		Username:  rc.username,
-		Password:  rc.password,
-		AccessKey: rc.accessKey,
+		Username:  username,
+		Password:  password,
+		AccessKey: accessKey,
 	})
 
 	if err != nil {
