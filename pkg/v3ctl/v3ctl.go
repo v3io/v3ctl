@@ -49,7 +49,7 @@ func NewRootCommandeer() *RootCommandeer {
 
 	defaultV3ioServer := os.Getenv("V3IO_API")
 
-	cmd.PersistentFlags().StringVarP(&commandeer.logLevel, "log-level", "v", "debug",
+	cmd.PersistentFlags().StringVarP(&commandeer.logLevel, "log-level", "v", "info",
 		`Verbose output. Add "=<level>" to set the log level -
 debug | info | warn | error. For example: -v=warn`)
 	cmd.PersistentFlags().StringVarP(&commandeer.server, "server", "s", defaultV3ioServer,
@@ -77,6 +77,7 @@ If access-key is passed, it will take precedence on user/password authentication
 		newCreateCommandeer(commandeer).cmd,
 		newGetCommandeer(commandeer).cmd,
 		newDeleteCommandeer(commandeer).cmd,
+		newLsCommandeer(commandeer).cmd,
 	)
 
 	commandeer.cmd = cmd
