@@ -92,7 +92,7 @@ func (rc *RootCommandeer) initialize() error {
 		return errors.Wrap(err, "Failed to create logger")
 	}
 
-	rc.dataPlaneContext, err = v3iohttp.NewContext(rc.Logger, []string{rc.server}, 4)
+	rc.dataPlaneContext, err = v3iohttp.NewContext(rc.Logger, &v3io.NewContextInput{ClusterEndpoints: []string{rc.server}})
 	if err != nil {
 		return errors.Wrap(err, "Failed to create v3io context")
 	}
@@ -116,7 +116,7 @@ func (rc *RootCommandeer) initialize() error {
 		}
 	}
 
-	session, err := rc.dataPlaneContext.NewSessionSync(&v3io.NewSessionInput{
+	session, err := rc.dataPlaneContext.NewSession(&v3io.NewSessionInput{
 		Username:  username,
 		Password:  password,
 		AccessKey: accessKey,
@@ -164,7 +164,7 @@ func (rc *RootCommandeer) getControlPlaneSession() (v3ioc.Session, error) {
 		return rc.controlPlaneSession, nil
 	}
 
-	createSessionInput := v3ioc.CreateSessionInput{}
+	createSessionInput := v3ioc.NewSessionInput{}
 	createSessionInput.Endpoints = []string{rc.controlServer}
 	createSessionInput.Username = rc.username
 	createSessionInput.Password = rc.password
