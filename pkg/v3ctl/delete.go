@@ -1,25 +1,19 @@
 package v3ctl
 
 import (
-	"fmt"
-	"strconv"
-	"strings"
-
 	"github.com/nuclio/errors"
 	"github.com/spf13/cobra"
-	"github.com/v3io/v3io-go/pkg/controlplane"
-	"github.com/v3io/v3io-go/pkg/dataplane"
-	"github.com/v3io/v3io-go/pkg/dataplane/http"
+	"github.com/v3io/registry"
 )
 
-type deleteCommandeer struct {
-	cmd            *cobra.Command
-	rootCommandeer *RootCommandeer
+type DeleteCommandeer struct {
+	Cmd            *cobra.Command
+	RootCommandeer *RootCommandeer
 }
 
-func newDeleteCommandeer(rootCommandeer *RootCommandeer) *deleteCommandeer {
-	commandeer := &deleteCommandeer{
-		rootCommandeer: rootCommandeer,
+func newDeleteCommandeer(rootCommandeer *RootCommandeer) (*DeleteCommandeer, error) {
+	commandeer := &DeleteCommandeer{
+		RootCommandeer: rootCommandeer,
 	}
 
 	cmd := &cobra.Command{
@@ -27,149 +21,37 @@ func newDeleteCommandeer(rootCommandeer *RootCommandeer) *deleteCommandeer {
 		Short: "Delete resources",
 	}
 
-	deleteContainerCommand := newDeleteContainerCommandeer(commandeer).cmd
-	deleteStreamCommand := newDeleteStreamCommandeer(commandeer).cmd
-
-	cmd.AddCommand(
-		deleteContainerCommand,
-		deleteStreamCommand,
-	)
-
-	commandeer.cmd = cmd
-
-	return commandeer
-}
-
-type deleteContainerCommandeer struct {
-	*deleteCommandeer
-}
-
-func newDeleteContainerCommandeer(deleteCommandeer *deleteCommandeer) *deleteContainerCommandeer {
-	commandeer := &deleteContainerCommandeer{
-		deleteCommandeer: deleteCommandeer,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "container name",
-		Short: "Delete a data container",
-		RunE: func(cmd *cobra.Command, args []string) error {
-
-			// if we got positional arguments
-			if len(args) != 1 {
-				return errors.New("Container delete requires a container name")
-			}
-
-			// initialize root
-			if err := deleteCommandeer.rootCommandeer.initialize(); err != nil {
-				return errors.Wrap(err, "Failed to initialize root")
-			}
-
-			controlPlaneSession, err := deleteCommandeer.rootCommandeer.getControlPlaneSession()
-			if err != nil {
-				return errors.Wrap(err, "Failed to get control plane session")
-			}
-
-			deleteContainerInput := v3ioc.DeleteContainerInput{}
-
-			// resolve the container name to an ID
-			deleteContainerInput.ID, err = deleteCommandeer.getContainerID(args[0])
-			if err != nil {
-				return errors.Wrap(err, "Failed to get container ID")
-			}
-
-			err = controlPlaneSession.DeleteContainerSync(&deleteContainerInput)
-			if err != nil {
-				return errors.Wrap(err, "Failed to delete container")
-			}
-
-			fmt.Printf("Container %s deleted successfully\n", args[0])
-			return nil
-		},
-	}
-
-	commandeer.cmd = cmd
-
-	return commandeer
-}
-
-func (c *deleteCommandeer) getContainerID(containerNameOrID string) (string, error) {
-
-	// get containers
-	getContainersInput := v3io.GetContainersInput{}
-	getContainersInput.AuthenticationToken = v3iohttp.GenerateAuthenticationToken(c.rootCommandeer.username, c.rootCommandeer.password)
-	getContainersInput.AccessKey = c.rootCommandeer.accessKey
-
-	response, err := c.rootCommandeer.dataPlaneContext.GetContainersSync(&getContainersInput)
-	if err != nil {
-		return "", errors.Wrap(err, "Failed to get containers")
-	}
-
-	// iterate over containers and look for a container whose name == name
-	for _, container := range response.Output.(*v3io.GetContainersOutput).Results.Containers {
-		if container.Name == containerNameOrID {
-			return strconv.Itoa(container.ID), nil
+	// iterate over registry objects
+	for _, deleteCommandeerKind := range DeleteCommandeerRegistrySingleton.GetKinds() {
+		deleteCommandeerCreatorInterface, err := DeleteCommandeerRegistrySingleton.Get(deleteCommandeerKind)
+		if err != nil {
+			return nil, errors.Wrap(err, "Failed to delete commandeer")
 		}
-	}
 
-	// couldn't find container with this name.
-	// iterate over the containers and look for a container with this ID
-	for _, container := range response.Output.(*v3io.GetContainersOutput).Results.Containers {
-		idString := strconv.Itoa(container.ID)
+		// get the creator
+		deleteCommandeerCreator := deleteCommandeerCreatorInterface.(func(deleteCommandeer *DeleteCommandeer) (*cobra.Command, error))
 
-		if idString == containerNameOrID {
-			return idString, nil
+		deleteCommandeerInstance, err := deleteCommandeerCreator(commandeer)
+		if err != nil {
+			return nil, errors.Wrap(err, "Failed to delete delete commandeer")
 		}
+
+		// add command
+		cmd.AddCommand(deleteCommandeerInstance)
 	}
 
-	// could not find container with this name / id
-	return "", errors.Errorf("Could not find container with name or ID of %s", containerNameOrID)
+	commandeer.Cmd = cmd
+
+	return commandeer, nil
 }
 
-type deleteStreamCommandeer struct {
-	*deleteCommandeer
+func (c *DeleteCommandeer) Initialize() error {
+	return c.RootCommandeer.Initialize()
 }
 
-func newDeleteStreamCommandeer(deleteCommandeer *deleteCommandeer) *deleteStreamCommandeer {
-	commandeer := &deleteStreamCommandeer{
-		deleteCommandeer: deleteCommandeer,
-	}
+//
+// Factory registry
+//
 
-	cmd := &cobra.Command{
-		Use:   "stream name [flags]",
-		Short: "Delete a stream",
-		RunE: func(cmd *cobra.Command, args []string) error {
-
-			// if we got positional arguments
-			if len(args) != 1 {
-				return errors.New("Stream delete requires a stream name")
-			}
-
-			streamPath := args[0]
-
-			// must end with "/"
-			if !strings.HasSuffix(streamPath, "/") {
-				streamPath += "/"
-			}
-
-			// initialize root
-			if err := deleteCommandeer.rootCommandeer.initialize(); err != nil {
-				return errors.Wrap(err, "Failed to initialize root")
-			}
-
-			deleteStreamInput := v3io.DeleteStreamInput{}
-			deleteStreamInput.Path = streamPath
-
-			err := deleteCommandeer.rootCommandeer.container.DeleteStreamSync(&deleteStreamInput)
-			if err != nil {
-				return errors.Wrap(err, "Failed to get delete stream")
-			}
-
-			fmt.Printf("Stream %s deleted successfully\n", streamPath)
-			return nil
-		},
-	}
-
-	commandeer.cmd = cmd
-
-	return commandeer
-}
+// delete deletes a "delete" commandeer
+var DeleteCommandeerRegistrySingleton = registry.NewRegistry("deleteCommandeer")
