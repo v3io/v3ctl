@@ -1,6 +1,7 @@
 package v3ctl
 
 import (
+	"github.com/nuclio/renderer"
 	"os"
 	"sync"
 
@@ -172,6 +173,25 @@ func (c *RootCommandeer) Initialize() error {
 
 	if err != nil {
 		return errors.Wrap(err, "Failed to open container")
+	}
+
+	return nil
+}
+
+func (c *RootCommandeer) Render(info interface{}, columns []string, records [][]string) error {
+	renderer := renderer.NewRenderer(os.Stdout)
+
+	switch c.Output {
+	case "", "text":
+		if len(columns) == 0 {
+			return errors.New("Table render not supported. Try json or yaml")
+		}
+
+		renderer.RenderTable(columns, records)
+	case "yaml":
+		return renderer.RenderYAML(info) // nolint: errcheck
+	case "json":
+		return renderer.RenderJSON(info) // nolint: errcheck
 	}
 
 	return nil

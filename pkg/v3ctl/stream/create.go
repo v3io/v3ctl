@@ -29,7 +29,7 @@ func newCreateStreamCommandeer(createCommandeer *v3ctl.CreateCommandeer) (*creat
 
 			// if we got positional arguments
 			if len(args) != 1 {
-				return errors.New("Stream create requires a stream name")
+				return errors.New("Stream create requires a stream path")
 			}
 
 			streamPath := args[0]
@@ -61,6 +61,13 @@ func newCreateStreamCommandeer(createCommandeer *v3ctl.CreateCommandeer) (*creat
 
 	cmd.Flags().IntVar(&commandeer.shardCount, "shard-count", 1, "Number of shards in the stream")
 	cmd.Flags().IntVar(&commandeer.retentionPeriodHours, "retention-period", 1, "Retention period of the stream, in hours")
+
+	createRecordCommandeer, err := newCreateRecordCommandeer(commandeer)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to create create record")
+	}
+
+	cmd.AddCommand(createRecordCommandeer.Cmd)
 
 	commandeer.Cmd = cmd
 

@@ -1,13 +1,11 @@
 package container
 
 import (
-	"os"
 	"strconv"
 
 	"github.com/v3io/v3ctl/pkg/v3ctl"
 
 	"github.com/nuclio/errors"
-	"github.com/nuclio/renderer"
 	"github.com/spf13/cobra"
 	v3io "github.com/v3io/v3io-go/pkg/dataplane"
 	v3iohttp "github.com/v3io/v3io-go/pkg/dataplane/http"
@@ -41,7 +39,22 @@ func newGetContainerCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getContaine
 				return errors.Wrap(err, "Failed to get containers")
 			}
 
-			if err := commandeer.renderContainers(response.Output.(*v3io.GetContainersOutput).Results.Containers); err != nil {
+			defer response.Release()
+
+			containerInfos := response.Output.(*v3io.GetContainersOutput).Results.Containers
+
+			var records [][]string
+			for _, containerInfo := range containerInfos {
+				records = append(records, []string{
+					strconv.Itoa(containerInfo.ID),
+					containerInfo.Name,
+					containerInfo.CreationDate,
+				})
+			}
+
+			if err := commandeer.RootCommandeer.Render(containerInfos,
+				[]string{"ID", "Name", "Creation date"},
+				records); err != nil {
 				return errors.Wrap(err, "Failed to render")
 			}
 
@@ -52,31 +65,6 @@ func newGetContainerCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getContaine
 	commandeer.Cmd = cmd
 
 	return commandeer, nil
-}
-
-func (c *getContainerCommandeer) renderContainers(containerInfos []v3io.ContainerInfo) error {
-	renderer := renderer.NewRenderer(os.Stdout)
-
-	switch c.RootCommandeer.Output {
-	case "", "text":
-
-		var records [][]string
-		for _, containerInfo := range containerInfos {
-			records = append(records, []string{
-				strconv.Itoa(containerInfo.ID),
-				containerInfo.Name,
-				containerInfo.CreationDate,
-			})
-		}
-
-		renderer.RenderTable([]string{"ID", "Name", "Creation date"}, records)
-	case "yaml":
-		return renderer.RenderYAML(containerInfos) // nolint: errcheck
-	case "json":
-		return renderer.RenderJSON(containerInfos) // nolint: errcheck
-	}
-
-	return nil
 }
 
 // register to factory

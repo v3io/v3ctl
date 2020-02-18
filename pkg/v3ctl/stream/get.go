@@ -49,6 +49,8 @@ func newGetStreamCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getStreamComma
 				return errors.Wrapf(err, "Failed to get container contents at %s", args[0])
 			}
 
+			defer response.Release()
+
 			for _, content := range response.Output.(*v3io.GetItemsOutput).Items {
 				fmt.Println(content)
 			}
@@ -56,6 +58,13 @@ func newGetStreamCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getStreamComma
 			return nil
 		},
 	}
+
+	getStreamConsumerGroup, err := newGetStreamConsumerGroupCommandeer(commandeer)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to create create record")
+	}
+
+	cmd.AddCommand(getStreamConsumerGroup.Cmd)
 
 	commandeer.Cmd = cmd
 
