@@ -6,6 +6,7 @@ import (
 	"github.com/nuclio/errors"
 	"github.com/spf13/cobra"
 	"github.com/v3io/v3io-go/pkg/dataplane/streamconsumergroup"
+	v3ioerrors "github.com/v3io/v3io-go/pkg/errors"
 )
 
 type getStreamConsumerGroupMembersCommandeer struct {
@@ -48,6 +49,16 @@ func newGetStreamConsumerGroupMembersCommandeer(getStreamConsumerGroupCommandeer
 
 			streamConsumerGroupState, err := streamConsumerGroup.GetState()
 			if err != nil {
+				if errors.Cause(err) == v3ioerrors.ErrNotFound {
+					if err := commandeer.RootCommandeer.Render([]string{},
+						[]string{"Member ID", "Last Heartbeat", "Shards"},
+						[][]string{}); err != nil {
+						return errors.Wrap(err, "Failed to render")
+					}
+
+					return nil
+				}
+
 				return errors.Wrap(err, "Failed to get consumer group state")
 			}
 
