@@ -1,25 +1,19 @@
 package v3ctl
 
 import (
-	"fmt"
-	"os"
-	"strconv"
-
 	"github.com/nuclio/errors"
-	"github.com/nuclio/renderer"
 	"github.com/spf13/cobra"
-	"github.com/v3io/v3io-go/pkg/dataplane"
-	"github.com/v3io/v3io-go/pkg/dataplane/http"
+	"github.com/v3io/registry"
 )
 
-type getCommandeer struct {
-	cmd            *cobra.Command
-	rootCommandeer *RootCommandeer
+type GetCommandeer struct {
+	Cmd            *cobra.Command
+	RootCommandeer *RootCommandeer
 }
 
-func newGetCommandeer(rootCommandeer *RootCommandeer) *getCommandeer {
-	commandeer := &getCommandeer{
-		rootCommandeer: rootCommandeer,
+func newGetCommandeer(rootCommandeer *RootCommandeer) (*GetCommandeer, error) {
+	commandeer := &GetCommandeer{
+		RootCommandeer: rootCommandeer,
 	}
 
 	cmd := &cobra.Command{
@@ -27,129 +21,37 @@ func newGetCommandeer(rootCommandeer *RootCommandeer) *getCommandeer {
 		Short: "Get resources",
 	}
 
-	getContainersCommand := newGetContainersCommandeer(commandeer).cmd
-	getStreamsCommand := newGetStreamCommandeer(commandeer).cmd
-
-	cmd.AddCommand(
-		getContainersCommand,
-		getStreamsCommand,
-	)
-
-	commandeer.cmd = cmd
-
-	return commandeer
-}
-
-type getContainersCommandeer struct {
-	*getCommandeer
-}
-
-func newGetContainersCommandeer(getCommandeer *getCommandeer) *getContainersCommandeer {
-	commandeer := &getContainersCommandeer{
-		getCommandeer: getCommandeer,
-	}
-
-	cmd := &cobra.Command{
-		Use:   "containers",
-		Short: "Get data containers",
-		RunE: func(cmd *cobra.Command, args []string) error {
-
-			// initialize root
-			if err := getCommandeer.rootCommandeer.initialize(); err != nil {
-				return errors.Wrap(err, "Failed to initialize root")
-			}
-
-			getContainersInput := v3io.GetContainersInput{}
-			getContainersInput.AuthenticationToken = v3iohttp.GenerateAuthenticationToken(getCommandeer.rootCommandeer.username, getCommandeer.rootCommandeer.password)
-			getContainersInput.AccessKey = getCommandeer.rootCommandeer.accessKey
-
-			response, err := getCommandeer.rootCommandeer.dataPlaneContext.GetContainersSync(&getContainersInput)
-			if err != nil {
-				return errors.Wrap(err, "Failed to get containers")
-			}
-
-			commandeer.renderContainers(response.Output.(*v3io.GetContainersOutput).Results.Containers)
-
-			return nil
-		},
-	}
-
-	commandeer.cmd = cmd
-
-	return commandeer
-}
-
-func (c *getCommandeer) renderContainers(containerInfos []v3io.ContainerInfo) {
-	renderer := renderer.NewRenderer(os.Stdout)
-
-	switch c.rootCommandeer.output {
-	case "", "text":
-
-		var records [][]string
-		for _, containerInfo := range containerInfos {
-			records = append(records, []string{
-				strconv.Itoa(containerInfo.ID),
-				containerInfo.Name,
-				containerInfo.CreationDate,
-			})
+	// iterate over registry objects
+	for _, getCommandeerKind := range GetCommandeerRegistrySingleton.GetKinds() {
+		getCommandeerCreatorInterface, err := GetCommandeerRegistrySingleton.Get(getCommandeerKind)
+		if err != nil {
+			return nil, errors.Wrap(err, "Failed to get commandeer")
 		}
 
-		renderer.RenderTable([]string{"ID", "Name", "Creation date"}, records)
-	case "yaml":
-		renderer.RenderYAML(containerInfos) // nolint: errcheck
-	case "json":
-		renderer.RenderJSON(containerInfos) // nolint: errcheck
-	}
-}
+		// get the creator
+		getCommandeerCreator := getCommandeerCreatorInterface.(func(getCommandeer *GetCommandeer) (*cobra.Command, error))
 
-type getStreamsCommandeer struct {
-	*getCommandeer
-}
+		getCommandeerInstance, err := getCommandeerCreator(commandeer)
+		if err != nil {
+			return nil, errors.Wrap(err, "Failed to get get commandeer")
+		}
 
-func newGetStreamCommandeer(getCommandeer *getCommandeer) *getStreamsCommandeer {
-	commandeer := &getStreamsCommandeer{
-		getCommandeer: getCommandeer,
+		// add command
+		cmd.AddCommand(getCommandeerInstance)
 	}
 
-	cmd := &cobra.Command{
-		Use:   "stream path",
-		Short: "Get all streams at a given path",
-		RunE: func(cmd *cobra.Command, args []string) error {
+	commandeer.Cmd = cmd
 
-			// if we got positional arguments
-			if len(args) != 1 {
-				return errors.New("Stream get requires a stream path")
-			}
-
-			// initialize root
-			if err := getCommandeer.rootCommandeer.initialize(); err != nil {
-				return errors.Wrap(err, "Failed to initialize root")
-			}
-
-			path := args[0]
-
-			// populate request
-			getItemsInput := &v3io.GetItemsInput{}
-			getItemsInput.Path = path
-			getItemsInput.ContainerName = getCommandeer.rootCommandeer.containerName
-			getItemsInput.AuthenticationToken = v3iohttp.GenerateAuthenticationToken(getCommandeer.rootCommandeer.username, getCommandeer.rootCommandeer.password)
-			getItemsInput.AccessKey = getCommandeer.rootCommandeer.accessKey
-
-			response, err := getCommandeer.rootCommandeer.dataPlaneContext.GetItemsSync(getItemsInput)
-
-			if err != nil {
-				return errors.Wrapf(err, "Failed to get container contents at %s", args[0])
-			}
-
-			for _, content := range response.Output.(*v3io.GetItemsOutput).Items {
-				fmt.Println(content)
-			}
-
-			return nil
-		},
-	}
-
-	commandeer.cmd = cmd
-
-	return commandeer
+	return commandeer, nil
 }
+
+func (c *GetCommandeer) Initialize() error {
+	return c.RootCommandeer.Initialize()
+}
+
+//
+// Factory registry
+//
+
+// get gets a "get" commandeer
+var GetCommandeerRegistrySingleton = registry.NewRegistry("getCommandeer")

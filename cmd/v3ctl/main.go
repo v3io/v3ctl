@@ -4,13 +4,21 @@ import (
 	"os"
 
 	"github.com/v3io/v3ctl/pkg/v3ctl"
+	_ "github.com/v3io/v3ctl/pkg/v3ctl/container"
+	_ "github.com/v3io/v3ctl/pkg/v3ctl/stream"
 
 	"github.com/nuclio/errors"
 )
 
 func main() {
-	if err := v3ctl.NewRootCommandeer().Execute(); err != nil {
-		errors.PrintErrorStack(os.Stderr, err, 5)
+	rootCommandeer, err := v3ctl.NewRootCommandeer()
+	if err != nil {
+		errors.PrintErrorStack(os.Stderr, err, 10)
+		os.Exit(1)
+	}
+
+	if err := rootCommandeer.Execute(); err != nil {
+		errors.PrintErrorStack(os.Stderr, err, 10)
 		os.Exit(1)
 	}
 
