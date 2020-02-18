@@ -131,8 +131,7 @@ func (c *RootCommandeer) Initialize() error {
 	}
 
 	c.DataPlaneContext, err = v3iohttp.NewContext(c.Logger,
-		v3iohttp.NewDefaultClient(),
-		&v3io.NewContextInput{})
+		&v3iohttp.NewContextInput{})
 	if err != nil {
 		return errors.Wrap(err, "Failed to create v3io context")
 	}

@@ -40,13 +40,13 @@ func newGetStreamConsumerGroupOffsetsCommandeer(getStreamConsumerGroupCommandeer
 				return errors.Wrap(err, "Failed to initialize root")
 			}
 
-			shardOffets, err := commandeer.getShardOffets(args[0])
+			shardOffsets, err := commandeer.getShardOffets(args[0])
 			if err != nil {
 				return errors.Wrap(err, "Failed to get shard offsets")
 			}
 
 			var records [][]string
-			for _, shardOffset := range shardOffets {
+			for _, shardOffset := range shardOffsets {
 				memberID := shardOffset.MemberID
 				if memberID == "" {
 					memberID = "-"
@@ -59,7 +59,7 @@ func newGetStreamConsumerGroupOffsetsCommandeer(getStreamConsumerGroupCommandeer
 				})
 			}
 
-			if err := commandeer.RootCommandeer.Render(shardOffets,
+			if err := commandeer.RootCommandeer.Render(shardOffsets,
 				[]string{"Shard ID", "Member ID", "Offset"},
 				records); err != nil {
 				return errors.Wrap(err, "Failed to render")
