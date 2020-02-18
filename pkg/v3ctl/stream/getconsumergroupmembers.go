@@ -2,6 +2,7 @@ package stream
 
 import (
 	"fmt"
+
 	"github.com/nuclio/errors"
 	"github.com/spf13/cobra"
 	"github.com/v3io/v3io-go/pkg/dataplane/streamconsumergroup"

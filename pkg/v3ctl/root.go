@@ -1,13 +1,13 @@
 package v3ctl
 
 import (
-	"github.com/nuclio/renderer"
 	"os"
 	"sync"
 
 	"github.com/nuclio/errors"
 	"github.com/nuclio/logger"
 	"github.com/nuclio/loggerus"
+	"github.com/nuclio/renderer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/v3io/v3io-go/pkg/controlplane"
