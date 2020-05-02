@@ -2,6 +2,7 @@ package v3ctl
 
 import (
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/nuclio/errors"
@@ -45,6 +46,9 @@ func NewRootCommandeer() (*RootCommandeer, error) {
 	}
 
 	defaultV3ioServer := os.Getenv("V3IO_API")
+	if !strings.HasPrefix(defaultV3ioServer, "http") {
+		defaultV3ioServer = "http://" + defaultV3ioServer
+	}
 
 	cmd.PersistentFlags().StringVarP(&commandeer.logLevel, "log-level", "v", "info",
 		`Verbose output. Add "=<level>" to set the log level -

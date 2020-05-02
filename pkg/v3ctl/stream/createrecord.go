@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/nuclio/errors"
@@ -60,6 +61,11 @@ func newCreateRecordCommandeer(createStreamCommandeer *createStreamCommandeer) (
 			}
 
 			defer response.Release()
+
+			fmt.Printf("Wrote %d bytes to %s:%d\n",
+				len(commandeer.data),
+				streamPath,
+				commandeer.shardID)
 
 			return nil
 		},
