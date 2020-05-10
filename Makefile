@@ -1,20 +1,23 @@
-GOPATH ?= /go
 GOOS ?= linux
 GOARCH ?= amd64
+V3CTL_GIT_COMMIT = $(shell git rev-parse HEAD)
 V3CTL_TAG ?= latest
-V3CTL_PATH ?= $(GOPATH)/src/github.com/v3io/v3ctl
-V3CTL_BUILD_COMMAND ?= CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags="-s -w" -o $(GOPATH)/bin/v3ctl-$(V3CTL_TAG)-$(GOOS)-$(GOARCH) $(V3CTL_PATH)/cmd/v3ctl/main.go
+V3CTL_SRC_PATH = /v3ctl
+V3CTL_BIN_PATH = /v3ctl
 
-# force go modules
-export GO111MODULE := on
+GO_LINK_FLAGS_INJECT_VERSION := -s -w \
+	-X github.com/v3io/version-go.gitCommit=$(V3CTL_GIT_COMMIT) \
+	-X github.com/v3io/version-go.label=$(V3CTL_TAG) \
+	-X github.com/v3io/version-go.os=$(GOOS) \
+	-X github.com/v3io/version-go.arch=$(GOARCH)
+
+V3CTL_BUILD_COMMAND ?= CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags="${GO_LINK_FLAGS_INJECT_VERSION}" -o ${V3CTL_BIN_PATH}/v3ctl-$(V3CTL_TAG)-$(GOOS)-$(GOARCH) $(V3CTL_SRC_PATH)/cmd/v3ctl/main.go
 
 .PHONY: lint
 lint:
 	docker run --rm \
 		--volume ${shell pwd}:/go/src/github.com/v3io/v3ctl \
-		--env GOPATH=/go \
-		--env GO111MODULE=off \
-		golang:1.12 \
+		golang:1.14 \
 		bash /go/src/github.com/v3io/v3ctl/hack/lint.sh
 
 	@echo Done.
@@ -30,10 +33,11 @@ v3ctl-bin:
 .PHONY: v3ctl
 v3ctl:
 	docker run \
-		--volume $(shell pwd):$(V3CTL_PATH) \
-		--volume $(shell pwd):/go/bin \
-		--workdir $(GOPATH) \
+		--volume $(shell pwd):${V3CTL_SRC_PATH} \
+		--volume $(shell pwd):$(V3CTL_BIN_PATH) \
+		--workdir ${V3CTL_SRC_PATH} \
 		--env GOOS=$(GOOS) \
 		--env GOARCH=$(GOARCH) \
-		golang:1.12 \
+		--env V3CTL_TAG=$(V3CTL_TAG) \
+		golang:1.14 \
 		make v3ctl-bin
