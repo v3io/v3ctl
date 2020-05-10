@@ -1,6 +1,6 @@
 module github.com/v3io/v3ctl
 
-go 1.12
+go 1.14
 
 require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
@@ -15,4 +15,6 @@ require (
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/v3io/registry v0.0.1
 	github.com/v3io/v3io-go v0.1.4
+	github.com/v3io/version-go v0.0.1
+	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

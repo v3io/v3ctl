@@ -88,9 +88,15 @@ If access-key is passed, it will take precedence on user/password authentication
 		return nil, errors.Wrap(err, "Failed to create get commandeer")
 	}
 
+	versionCommandeerInstance, err := newVersionCommandeer(commandeer)
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to create version commandeer")
+	}
+
 	cmd.AddCommand(createCommandeerInstance.Cmd)
 	cmd.AddCommand(deleteCommandeerInstance.Cmd)
 	cmd.AddCommand(getCommandeerInstance.Cmd)
+	cmd.AddCommand(versionCommandeerInstance.Cmd)
 
 	commandeer.cmd = cmd
 

@@ -71,6 +71,8 @@ github.com/v3io/registry v0.0.1 h1:tVOEMTDI6tuNNs7escRvdf9j8srC+XtP6ryKvEcG9LA=
 github.com/v3io/registry v0.0.1/go.mod h1:QJ7/XZqI5Yd7vupSm/GXJsyyajeTTEIPSoKJQBk7wuE=
 github.com/v3io/v3io-go v0.1.4 h1:zg/B0ATSxaLm0/Z7nNnlyrCtDQTIBTSoaIo2wKnKx+M=
 github.com/v3io/v3io-go v0.1.4/go.mod h1:D0W1tjsVgcp4xk3ZI2fjKTKaOpYJLewN1BPN0x2osO4=
+github.com/v3io/version-go v0.0.1 h1:nH7JuzeRRqaC1jRjmJ/ri93+w1KVxecxc4bM5JHd4Nk=
+github.com/v3io/version-go v0.0.1/go.mod h1:ckuefSs0aXfU4QzfvmEiNUbbQk/h4nb6/RiMDS8ySGM=
 github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6KllzawFIhcdPw=
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.2.0 h1:dzZJf2IuMiclVjdw0kkT+f9u4YdrapbNyGAN47E/qnk=
@@ -98,5 +100,7 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
+gopkg.in/yaml.v2 v2.2.8 h1:obN1ZagJSUGI0Ek/LBmuj4SNLPfIny3KsKFopxRdj10=
+gopkg.in/yaml.v2 v2.2.8/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 zombiezen.com/go/capnproto2 v2.17.0+incompatible h1:sIoKPFGNlM38Qh+PBLa9Wzg1j99oInS/Qlk+5N/CHa4=
 zombiezen.com/go/capnproto2 v2.17.0+incompatible/go.mod h1:XO5Pr2SbXgqZwn0m0Ru54QBqpOf4K5AYBO+8LAOBQEQ=
