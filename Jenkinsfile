@@ -17,6 +17,12 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang1.
                     string(credentialsId: git_deploy_user_token, variable: 'GIT_TOKEN')
             ]) {
                 github.release(git_deploy_user, git_project, git_project_user, git_project_upstream_user, true, GIT_TOKEN) {
+                    stage("get release") {
+                        container('jnlp') {
+                            RELEASE_ID = github.get_release_id(git_project, git_project_user, "${github.TAG_VERSION}", GIT_TOKEN)
+                        }
+                    }
+
                     stage('get dependencies') {
                         container('golang') {
                             dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
