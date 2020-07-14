@@ -2,8 +2,8 @@ GOOS ?= linux
 GOARCH ?= amd64
 V3CTL_GIT_COMMIT = $(shell git rev-parse HEAD)
 V3CTL_TAG ?= latest
-V3CTL_SRC_PATH = /v3ctl
-V3CTL_BIN_PATH = /v3ctl
+V3CTL_SRC_PATH ?= /v3ctl
+V3CTL_BIN_PATH ?= /v3ctl
 
 GO_LINK_FLAGS_INJECT_VERSION := -s -w \
 	-X github.com/v3io/version-go.gitCommit=$(V3CTL_GIT_COMMIT) \
