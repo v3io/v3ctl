@@ -60,6 +60,12 @@ func newCreateRecordCommandeer(createStreamCommandeer *createStreamCommandeer) (
 				return errors.Wrap(err, "Failed to get create stream")
 			}
 
+			putRecordsResponse, ok := response.Output.(v3io.PutRecordsOutput)
+			if ok && putRecordsResponse.FailedRecordCount != 0 {
+				return errors.Errorf("Failed to put all records, FailedRecordCount: %d",
+					putRecordsResponse.FailedRecordCount)
+			}
+
 			defer response.Release()
 
 			fmt.Printf("Wrote %d bytes to %s:%d\n",
