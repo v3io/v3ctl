@@ -14,7 +14,7 @@ require (
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3 // indirect
 	github.com/v3io/registry v0.0.1
-	github.com/v3io/v3io-go v0.1.4
+	github.com/v3io/v3io-go v0.2.22
 	github.com/v3io/version-go v0.0.1
-	gopkg.in/yaml.v2 v2.2.8 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
