@@ -5,6 +5,7 @@ import (
 
 	"github.com/v3io/v3ctl/pkg/v3ctl"
 	_ "github.com/v3io/v3ctl/pkg/v3ctl/container"
+	_ "github.com/v3io/v3ctl/pkg/v3ctl/content"
 	_ "github.com/v3io/v3ctl/pkg/v3ctl/stream"
 
 	"github.com/nuclio/errors"
