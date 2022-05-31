@@ -2,16 +2,17 @@ package content
 
 import (
 	"fmt"
-	"github.com/v3io/v3ctl/pkg/v3ctl"
-	"time"
 	"github.com/nuclio/errors"
 	"github.com/spf13/cobra"
+	"github.com/v3io/v3ctl/pkg/v3ctl"
 	v3io "github.com/v3io/v3io-go/pkg/dataplane"
+	"time"
 )
 
 type getContentCommandeer struct {
 	*v3ctl.GetCommandeer
-	dirsOnly bool
+	dirsOnly         bool
+	getAllAttributes bool
 }
 
 func newGetContentCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getContentCommandeer, error) {
@@ -36,7 +37,7 @@ func newGetContentCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getContentCom
 			}
 
 			getContainerContentsInput := &v3io.GetContainerContentsInput{
-				GetAllAttributes: true,
+				GetAllAttributes: commandeer.getAllAttributes,
 				DirectoriesOnly:  commandeer.dirsOnly,
 				Limit:            1000,
 				DataPlaneInput: v3io.DataPlaneInput{
@@ -85,6 +86,7 @@ func newGetContentCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getContentCom
 	}
 
 	cmd.Flags().BoolVar(&commandeer.dirsOnly, "dirs-only", false, "retrieve directories only")
+	cmd.Flags().BoolVar(&commandeer.getAllAttributes, "get-all-attrs", true, "retrieve all directory attributes")
 
 	commandeer.Cmd = cmd
 
