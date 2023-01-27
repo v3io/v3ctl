@@ -22,7 +22,6 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang1.
                             RELEASE_ID = github.get_release_id(git_project, git_project_user, "${github.TAG_VERSION}", GIT_TOKEN)
                         }
                     }
-
                     stage('get dependencies') {
                         container('golang') {
                             dir("${github.BUILD_FOLDER}/src/github.com/v3io/${git_project}") {
@@ -30,7 +29,6 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang1.
                             }
                         }
                     }
-
                     parallel(
                         'build linux binaries': {
                             container('golang') {
@@ -41,34 +39,8 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang1.
                                 }
                             }
                         },
-                        'build darwin binaries': {
-                            container('golang') {
-                                stage('build darwin binaries') {
-                                    dir("${github.BUILD_FOLDER}/src/github.com/${git_project_upstream_user}/${git_project}") {
-                                        common.shellc("V3CTL_SRC_PATH=\$(pwd) V3CTL_BIN_PATH=\$(pwd) V3CTL_TAG=${github.TAG_VERSION} GOARCH=amd64 GOOS=darwin make v3ctl-bin")
-                                    }
-                                }
-                            }
-                        },
-                        'build windows binaries': {
-                            container('golang') {
-                                stage('build windows binaries') {
-                                    dir("${github.BUILD_FOLDER}/src/github.com/${git_project_upstream_user}/${git_project}") {
-                                        common.shellc("V3CTL_SRC_PATH=\$(pwd) V3CTL_BIN_PATH=\$(pwd) V3CTL_TAG=${github.TAG_VERSION} GOARCH=amd64 GOOS=windows make v3ctl-bin")
-                                    }
-                                }
-                            }
-                        }
                     )
-
                     parallel(
-                        'upload linux binaries': {
-                            container('jnlp') {
-                                stage('upload linux binaries') {
-                                    github.upload_asset(git_project, git_project_user, "v3ctl-${github.TAG_VERSION}-linux-amd64", RELEASE_ID, GIT_TOKEN)
-                                }
-                            }
-                        },
                         'upload linux binaries artifactory': {
                             container('jnlp') {
                                 stage('upload linux binaries artifactory') {
@@ -80,20 +52,6 @@ podTemplate(label: "${git_project}-${label}", inheritFrom: "jnlp-docker-golang1.
                                 }
                             }
                         },
-                        'upload darwin binaries': {
-                            container('jnlp') {
-                                stage('upload darwin binaries') {
-                                    github.upload_asset(git_project, git_project_user, "v3ctl-${github.TAG_VERSION}-darwin-amd64", RELEASE_ID, GIT_TOKEN)
-                                }
-                            }
-                        },
-                        'upload windows binaries': {
-                            container('jnlp') {
-                                stage('upload windows binaries') {
-                                    github.upload_asset(git_project, git_project_user, "v3ctl-${github.TAG_VERSION}-windows-amd64", RELEASE_ID, GIT_TOKEN)
-                                }
-                            }
-                        }
                     )
                 }
             }
