@@ -29,12 +29,12 @@ V3CTL_BUILD_COMMAND ?= CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags="${
 
 .PHONY: lint
 lint:
-	docker run --rm \
-		--volume ${shell pwd}:/go/src/github.com/v3io/v3ctl \
-		golang:1.14 \
-		bash /go/src/github.com/v3io/v3ctl/hack/lint.sh
+	./hack/lint/install.sh
+	./hack/lint/run.sh
 
-	@echo Done.
+.PHONY: fmt
+fmt:
+	@go fmt $(shell go list ./... | grep -v /vendor/)
 
 .PHONY: get-dependencies
 get-dependencies:
@@ -53,5 +53,5 @@ v3ctl:
 		--env GOOS=$(GOOS) \
 		--env GOARCH=$(GOARCH) \
 		--env V3CTL_TAG=$(V3CTL_TAG) \
-		golang:1.14 \
+		gcr.io/iguazio/golang:1.19 \
 		make v3ctl-bin

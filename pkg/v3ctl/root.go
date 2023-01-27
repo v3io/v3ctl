@@ -17,6 +17,7 @@ illegal under applicable law, and the grant of the foregoing license
 under the Apache 2.0 license is conditioned upon your compliance with
 such restriction.
 */
+
 package v3ctl
 
 import (
@@ -24,10 +25,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/v3io/v3ctl/pkg/renderer"
+
 	"github.com/nuclio/errors"
 	"github.com/nuclio/logger"
 	"github.com/nuclio/loggerus"
-	"github.com/nuclio/renderer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/v3io/v3io-go/pkg/controlplane"
@@ -234,5 +236,5 @@ func (c *RootCommandeer) createLogger() (logger.Logger, error) {
 		loggerLevel = logrus.InfoLevel
 	}
 
-	return loggerus.NewTextLoggerus("v3ctl", loggerLevel, os.Stdout, false)
+	return loggerus.NewTextLoggerus("v3ctl", loggerLevel, os.Stdout, false, false)
 }

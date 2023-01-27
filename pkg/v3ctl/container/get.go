@@ -17,6 +17,7 @@ illegal under applicable law, and the grant of the foregoing license
 under the Apache 2.0 license is conditioned upon your compliance with
 such restriction.
 */
+
 package container
 
 import (
@@ -50,8 +51,12 @@ func newGetContainerCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getContaine
 			}
 
 			getContainersInput := v3io.GetContainersInput{}
-			getContainersInput.AuthenticationToken = v3iohttp.GenerateAuthenticationToken(getCommandeer.RootCommandeer.Username, getCommandeer.RootCommandeer.Password)
+			getContainersInput.AuthenticationToken = v3iohttp.GenerateAuthenticationToken(
+				getCommandeer.RootCommandeer.Username,
+				getCommandeer.RootCommandeer.Password,
+			)
 			getContainersInput.AccessKey = getCommandeer.RootCommandeer.AccessKey
+			getContainersInput.ContainerName = getCommandeer.RootCommandeer.ContainerName
 
 			response, err := getCommandeer.RootCommandeer.DataPlaneContext.GetContainersSync(&getContainersInput)
 			if err != nil {

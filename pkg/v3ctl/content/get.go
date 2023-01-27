@@ -17,15 +17,18 @@ illegal under applicable law, and the grant of the foregoing license
 under the Apache 2.0 license is conditioned upon your compliance with
 such restriction.
 */
+
 package content
 
 import (
 	"fmt"
+	"time"
+
+	"github.com/v3io/v3ctl/pkg/v3ctl"
+
 	"github.com/nuclio/errors"
 	"github.com/spf13/cobra"
-	"github.com/v3io/v3ctl/pkg/v3ctl"
 	v3io "github.com/v3io/v3io-go/pkg/dataplane"
-	"time"
 )
 
 type getContentCommandeer struct {
