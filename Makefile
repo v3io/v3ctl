@@ -25,7 +25,7 @@ GO_LINK_FLAGS_INJECT_VERSION := -s -w \
 	-X github.com/v3io/version-go.os=$(GOOS) \
 	-X github.com/v3io/version-go.arch=$(GOARCH)
 
-V3CTL_BUILD_COMMAND ?= CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags="${GO_LINK_FLAGS_INJECT_VERSION}" -o ${V3CTL_BIN_PATH}/v3ctl-$(V3CTL_TAG)-$(GOOS)-$(GOARCH) $(V3CTL_SRC_PATH)/cmd/v3ctl/main.go
+V3CTL_BUILD_COMMAND ?= GOOS=${GOOS} GOARCH=${GOARCH} CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags="${GO_LINK_FLAGS_INJECT_VERSION}" -o ${V3CTL_BIN_PATH}/v3ctl-$(V3CTL_TAG)-$(GOOS)-$(GOARCH) $(V3CTL_SRC_PATH)/cmd/v3ctl/main.go
 
 .PHONY: lint
 lint:
