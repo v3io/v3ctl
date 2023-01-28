@@ -22,6 +22,7 @@ package container
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/v3io/v3ctl/pkg/v3ctl"
 
@@ -57,8 +58,10 @@ func newGetContainerCommandeer(getCommandeer *v3ctl.GetCommandeer) (*getContaine
 			)
 			getContainersInput.AccessKey = getCommandeer.RootCommandeer.AccessKey
 			getContainersInput.ContainerName = getCommandeer.RootCommandeer.ContainerName
-
-			response, err := getCommandeer.RootCommandeer.DataPlaneContext.GetContainersSync(&getContainersInput)
+			getContainersInput.URL = getCommandeer.RootCommandeer.WebapiURL
+			getContainersInput.Timeout = time.Duration(60) * time.Second
+			getContainersInput.IncludeResponseInError = true
+			response, err := getCommandeer.RootCommandeer.Container.GetContainersSync(&getContainersInput)
 			if err != nil {
 				return errors.Wrap(err, "Failed to get containers")
 			}
