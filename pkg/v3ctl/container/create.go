@@ -62,8 +62,7 @@ func newCreateContainerCommandeer(createCommandeer *v3ctl.CreateCommandeer) (*cr
 			createContainerInput := v3ioc.CreateContainerInput{}
 			createContainerInput.Name = args[0]
 
-			_, err = controlPlaneSession.CreateContainerSync(&createContainerInput)
-			if err != nil {
+			if _, err := controlPlaneSession.CreateContainerSync(&createContainerInput); err != nil {
 				return errors.Wrap(err, "Failed to create container")
 			}
 

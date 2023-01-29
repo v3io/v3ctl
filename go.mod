@@ -10,22 +10,22 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	github.com/v3io/registry v0.0.1
-	github.com/v3io/v3io-go v0.2.31
+	github.com/v3io/v3io-go v0.3.0
 	github.com/v3io/version-go v0.0.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
+	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
-	github.com/klauspost/compress v1.4.0 // indirect
-	github.com/klauspost/cpuid v1.2.0 // indirect
+	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/logrusorgru/aurora/v3 v3.0.0 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
-	github.com/rs/xid v1.1.0 // indirect
+	github.com/rs/xid v1.4.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.2.0 // indirect
+	github.com/valyala/fasthttp v1.44.0 // indirect
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
