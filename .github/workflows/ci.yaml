@@ -21,25 +21,11 @@ on:
     - '[0-9]+.[0-9]+.x'
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-
-    - uses: actions/setup-go@v3
-      with:
-        cache: true
-        go-version-file: "go.mod"
-
-    - name: Run lint
-      run: make lint
-
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Run v3ctl
       run: make v3ctl

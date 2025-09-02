@@ -53,5 +53,5 @@ v3ctl:
 		--env GOOS=$(GOOS) \
 		--env GOARCH=$(GOARCH) \
 		--env V3CTL_TAG=$(V3CTL_TAG) \
-		gcr.io/iguazio/golang:1.19 \
+		gcr.io/iguazio/golang:1.23 \
 		make v3ctl-bin
