@@ -18,26 +18,22 @@ set -e
 
 echo Installing linters...
 
+OS_NAME=$(uname)
 FORCE_INSTALL=false
-OS_NAME=$(uname -s)
-OS_NAME_LOWERCASE=$(echo "${OS_NAME}" | tr "[:upper:]" "[:lower:]")
-
-if [[ -z "${BIN_DIR}" ]]; then
-  BIN_DIR=$(pwd)/.bin
-fi
+BIN_DIR=$(pwd)/.bin/
 
 echo "Creating bin directory: ${BIN_DIR}"
-mkdir -p "${BIN_DIR}"
+mkdir -p ${BIN_DIR}
 
 if [[ ! -f ${BIN_DIR}/impi ]] ; then
     echo "impi binary does not exist. Fetching and installing..."
-    curl -sSfL --retry 3 https://api.github.com/repos/pavius/impi/releases/latest \
+    curl -sSfL https://api.github.com/repos/pavius/impi/releases/latest \
       | grep -i "browser_download_url.*impi.*${OS_NAME}" \
       | cut -d : -f 2,3 \
       | tr -d '"' \
       | tr -d '[:space:]' \
-      | xargs curl -sSL --output "${BIN_DIR}"/impi
-    chmod +x "${BIN_DIR}/impi"
+      | xargs curl -sSL --output ${BIN_DIR}/impi
+    chmod +x ${BIN_DIR}/impi
     echo "impi installed in: ${BIN_DIR}/impi"
 fi
 
@@ -49,6 +45,7 @@ fi
 
 if [[ $FORCE_INSTALL = true || ! -f ${BIN_DIR}/golangci-lint ]] ; then
     echo "golangci-lint binary does not exist or force install requested. Fetching and installing..."
-    curl -sSfL --retry 3 https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "${BIN_DIR}" v1.50.1
+
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${BIN_DIR} v1.61.0
     echo "golangci-lint installed in: ${BIN_DIR}/golangci-lint"
 fi
