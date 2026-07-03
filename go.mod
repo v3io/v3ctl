@@ -1,6 +1,6 @@
 module github.com/v3io/v3ctl
 
-go 1.23.0
+go 1.25.0
 
 require (
 	github.com/jedib0t/go-pretty/v6 v6.6.8
@@ -26,9 +26,9 @@ require (
 	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.65.0 // indirect
-	golang.org/x/net v0.43.0 // indirect
-	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.35.0 // indirect
-	golang.org/x/text v0.28.0 // indirect
+	golang.org/x/net v0.55.0 // indirect
+	golang.org/x/sync v0.20.0 // indirect
+	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	zombiezen.com/go/capnproto2 v2.18.2+incompatible // indirect
 )
